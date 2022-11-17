@@ -1,7 +1,6 @@
 from tkinter import *
 from tkinter import messagebox
 import sqlite3
-from con_e_cad_tec import *                    
 
 
 
@@ -9,16 +8,16 @@ from con_e_cad_tec import *
 #                                       TELA DE LOGIN
 
 login = Tk()
-class App:
-    def __init__(self) -> None:
-        self.login = login
-        self.janela_inicio()
-        
+enc = Tk()
+class App:    
+    def __init__(self):
+        self.janela_inicio()  
+        self.login.mainloop()
 
-
-
-
-    def janela_inicio(self):                
+    def janela_inicio(self): 
+        self.login = login 
+        self.enc = enc
+        self.enc.withdraw()              
         self.login.title('Tela de login')
         self.login.geometry('400x500+100+100')
         self.login.iconbitmap("img-icons\\casa.ico")
@@ -51,10 +50,9 @@ class App:
         self.but_cadastrar = Button(login, width=12, height=2, relief='groove', command= self.janela_cadastro ,text='CADASTRAR', font=('Times','14','bold'), bg='lightblue', activebackground='lightgreen')
         self.but_cadastrar.place(x=200, y=380)
 
-        self.login.mainloop()
 
     def janela_cadastro(self):
-        self.cadastro = Toplevel()
+        self.cadastro = Toplevel(self.login)
         self.cadastro.title('Novo cadastro')
         self.cadastro.geometry('400x500+100+100')
         self.cadastro.resizable(False, False)
@@ -81,11 +79,33 @@ class App:
 
 
 
-#                                           CHAMANDO NOVO ARQUIVO  
-    def janela2 (self):
-        self.login.destroy()
-        self.root2 = Application(Funcs, Relatorios, Validadores)
-        
+#                                          
+    def encaminhamento (self):
+        self.enc.deiconify()
+        self.enc.title('Tela de escolha')
+        self.enc.geometry('400x500+100+100')
+        self.enc.resizable(width=False, height=False)
+
+        self.lab_enc = Label(self.enc, text='Escolha o cadastro para prosseguir', font=('Times', '18'))
+        self.lab_enc.pack(pady=20)
+
+        self.but_enc1 = Button(self.enc, width=12, height=2, relief='groove',command=self.cad_tec ,text='Tecnico', font=('Times','14','bold'), bg='lightblue', activebackground='lightgreen')
+        self.but_enc1.place(x=125, y=180)
+        self.but_enc2 = Button(self.enc, width=12, height=2, relief='groove',command=self.cad_fer ,text='Ferramenta', font=('Times','14','bold'), bg='lightblue', activebackground='lightgreen')
+        self.but_enc2.place(x=125, y=280)
+
+
+    def cad_tec (self):
+        self.enc.withdraw()
+        import con_e_cad_tec
+        self.enc.deiconify()
+    def cad_fer(self):
+        self.enc.withdraw()
+        import con_e_cad_fer
+        self.enc.deiconify()
+
+
+
     def entrar(self):
         self.conn = sqlite3.connect('Acesso_app.db')
         self.cursor = self.conn.cursor()
@@ -96,7 +116,10 @@ class App:
             messagebox.showerror('Erro', "Precisa realizar o cadastro")
         elif self.user_entry.get() == consulta[0][1] and self.login_passowrd.get() == consulta [0][2]:
             print('deu bom')
-            self.janela2()
+            self.login.destroy()
+            self.encaminhamento()
+            
+
 
 
         elif self.user_entry.get() == consulta[0][1] and self.login_passowrd.get() != consulta [0][2]:
@@ -121,5 +144,7 @@ class App:
             messagebox.showinfo('Sucesso', 'Os dados foram inseridos com sucesso')
             self.conn.close()
             self.cadastro.destroy()
+        self.conn.close()
+  
 
 App()
