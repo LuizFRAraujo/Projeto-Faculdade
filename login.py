@@ -96,13 +96,9 @@ class App:
 
 
     def cad_tec (self):
-        self.enc.withdraw()
         import con_e_cad_tec
-        self.enc.deiconify()
     def cad_fer(self):
-        self.enc.withdraw()
         import con_e_cad_fer
-        self.enc.deiconify()
 
 
 
